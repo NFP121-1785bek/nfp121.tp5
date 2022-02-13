@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.ListIterator;
 
 public class JPanelListe extends JPanel implements ActionListener, ItemListener {
 
@@ -63,8 +64,10 @@ public class JPanelListe extends JPanel implements ActionListener, ItemListener 
         add(texte, "Center");
 
         boutonRechercher.addActionListener(this);
-        // à compléter;
-
+        boutonRetirer.addActionListener(this);
+        boutonOccurrences.addActionListener(this);
+        ordreCroissant.addItemListener(this);
+        ordreDecroissant.addItemListener(this);
     }
 
     /** ne pas modifier les affichages, les classes de tests en ont besoin ... */
@@ -95,19 +98,33 @@ public class JPanelListe extends JPanel implements ActionListener, ItemListener 
 
     public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource() == ordreCroissant)
-            ;// à compléter
+            Collections.sort(liste);
         else if (ie.getSource() == ordreDecroissant)
-            ;// à compléter
+            Collections.sort(liste,new sortDec());
 
         texte.setText(liste.toString());
     }
 
     private boolean retirerDeLaListeTousLesElementsCommencantPar(String prefixe) {
         boolean resultat = false;
-        // à compléter
-        // à compléter
-        // à compléter
+        ListIterator<String> listIterator = liste.listIterator();
+        while(listIterator.hasNext()){
+            String next = listIterator.next();
+            
+            if (next.length() >= prefixe.length() && next.substring(0, prefixe.length()).equals(prefixe)){
+                 listIterator.remove();
+                 resultat = true;                 
+                 occurrences.put(next,occurrences.get(next)-1);
+            }
+        }
         return resultat;
     }
 
+    private class sortDec implements Comparator<String>{
+        
+        public int compare(String s1, String s2){
+            return s2.compareTo(s1);
+        }
+        
+    }
 }
